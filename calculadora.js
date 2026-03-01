@@ -1,12 +1,12 @@
 const CalculadoraDB = indexedDB.open("Calculadora", 1)
 let db
 
-CalculadoraDB.onupgradeneeded = function(event) {
+CalculadoraDB.onupgradeneeded = function (event) {
     const db = event.target.result
     db.createObjectStore("calculos", { keyPath: "id", autoIncrement: true })
 }
 
-CalculadoraDB.onsuccess = function(event) {
+CalculadoraDB.onsuccess = function (event) {
     db = event.target.result
     console.log("Conexao feita")
     deletarContas()
@@ -67,12 +67,12 @@ function carregarContas() {
 
     const getCalculos = objetoCalculos.getAll();
 
-    getCalculos.onsuccess = function(event) {
-        const calculos = event.target.result    
+    getCalculos.onsuccess = function (event) {
+        const calculos = event.target.result
         mostrarContas(calculos)
     }
 
-    getCalculos.onerror = function(event) {
+    getCalculos.onerror = function (event) {
         console.log("Error ao carregar as contas")
     }
 }
@@ -103,7 +103,7 @@ function digitarComPrompt(textoInicial, textoPrompt, valorDefaultPrompt) {
 // Função responsável por resetar a calculadora (botão C)
 function limpar() {
     // Localiza o visor e volta o texto dele para "0"
-    document.getElementById("visor").value = "0";
+    document.getElementById("visor").value = "";
 }
 
 // Função que processa toda a expressão matemática (botão =)
@@ -111,13 +111,17 @@ function calcular() {
     // Busca o visor para ler a conta que está escrita nele
     let visor = document.getElementById("visor");
 
+    if (visor.value == "") {
+        return;
+    }
+
     visor.value = converterTextoParaPadraoEval(visor.value);
 
     // 1. O comando 'eval' lê o texto (ex: "5+5") e o resolve como matemática (10)
     let resultado = eval(visor.value);
 
-    salvarConta({ 
-        conta: visor.value, 
+    salvarConta({
+        conta: visor.value,
         resultado: resultado,
     })
 
@@ -156,25 +160,21 @@ function verificarLetra() {
     visor.value = listaTexto.join("")
 }
 
-// MAIN
+// Função para abrir e fechar os painéis laterais
+function togglePainel(id) {
+    const painel = document.getElementById(id);
+    if (painel.style.display === "block") {
+        painel.style.display = "none";
+    } else {
+        painel.style.display = "block";
+    }
+}
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Função para mostrar/esconder botões científicos
-    const checkbox = document.getElementById("toggleCientifica");
-    const botoesCientificos = document.querySelectorAll(".cientifica");
-
-    botoesCientificos.forEach(botao => botao.style.display = "none");
-
-    checkbox.addEventListener("change", function () {
-        botoesCientificos.forEach(botao => {
-            if (this.checked) {
-                botao.style.display = "block";
-            } else {
-                botao.style.display = "none";
-            }
-        });
-    });
-});
+function apagaUltimoCaractere() {
+    const visor = document.getElementById("visor");
+    const listaTexto = visor.value.split("");
+    listaTexto.pop();
+    visor.value = listaTexto.join("");
+}
 
 
