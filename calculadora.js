@@ -103,7 +103,7 @@ function digitarComPrompt(textoInicial, textoPrompt, valorDefaultPrompt) {
 // Função responsável por resetar a calculadora (botão C)
 function limpar() {
     // Localiza o visor e volta o texto dele para "0"
-    document.getElementById("visor").value = "0";
+    document.getElementById("visor").value = "";
 }
 
 // Função que processa toda a expressão matemática (botão =)
